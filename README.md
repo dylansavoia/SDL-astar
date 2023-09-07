@@ -50,3 +50,4 @@ You can set a mode and perform other operations through the keyboard.
 |Enter|  Run A* / Reset grid |
 |P| Print the current grid to a file (saved in current directory) |
 |L| Loads a grid from a file named _saved_grid.txt_  in current directory |
+|Q| Close Window |
