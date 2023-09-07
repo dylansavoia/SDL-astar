@@ -46,49 +46,49 @@ int is_wall(GRID *grid, int i, int j);
 
 int main(int argc, char *argv[])
 {
-	enum Mode mode = WALL_MODE;
+    enum Mode mode = WALL_MODE;
 
     // Initialize Window and Renderer
-	if (SDL_Init(SDL_INIT_EVERYTHING)) return -1;
-	main_win = SDL_CreateWindow("Main",
+    if (SDL_Init(SDL_INIT_EVERYTHING)) return -1;
+    main_win = SDL_CreateWindow("Main",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         WIDTH, HEIGHT, 0
     );
-	main_render = SDL_CreateRenderer(main_win, -1, SDL_RENDERER_ACCELERATED);
-	SDL_RenderSetLogicalSize(main_render, WIDTH, HEIGHT);
+    main_render = SDL_CreateRenderer(main_win, -1, SDL_RENDERER_ACCELERATED);
+    SDL_RenderSetLogicalSize(main_render, WIDTH, HEIGHT);
 
     bool is_white = argc == 2 && argv[1][0] == '1';
     COLOR default_clr = (is_white) ? WALL_CLR : VOID_CLR;
-	grid = grid_init(0, 0, WIDTH, HEIGHT, CELL_DIM, default_clr);
+    grid = grid_init(0, 0, WIDTH, HEIGHT, CELL_DIM, default_clr);
 
     // There is a 2nd argument but it's not FILL white,
     // hence we assume the second arg is a filepath
     if (argc == 2 && !is_white) grid_load(argv[1], grid, &WALL_CLR);
 
-	bool can_loop = true;
-	COLOR curr;
+    bool can_loop = true;
+    COLOR curr;
 
-	int x, y;
+    int x, y;
     unsigned cellX = WIDTH  / CELL_DIM;
     unsigned cellY = HEIGHT / CELL_DIM;
 
-	// Main_Loop
-	while ( can_loop ) {
-		while ( SDL_PollEvent(&evt) ) {
-			if ( evt.type == SDL_QUIT ) can_loop = false;
-			else if ( evt.type == SDL_KEYUP ) {
-				switch (evt.key.keysym.sym) {
-					case SDLK_q: can_loop = false;
-					case SDLK_s:
-					case SDLK_b: mode = SRC_MODE; break;
-					case SDLK_e: 
-					case SDLK_d: mode = DEST_MODE;  break;
-					case SDLK_w: mode = WALL_MODE;  break;
+    // Main_Loop
+    while ( can_loop ) {
+        while ( SDL_PollEvent(&evt) ) {
+            if ( evt.type == SDL_QUIT ) can_loop = false;
+            else if ( evt.type == SDL_KEYUP ) {
+                switch (evt.key.keysym.sym) {
+                    case SDLK_q: can_loop = false;
+                    case SDLK_s:
+                    case SDLK_b: mode = SRC_MODE; break;
+                    case SDLK_e: 
+                    case SDLK_d: mode = DEST_MODE;  break;
+                    case SDLK_w: mode = WALL_MODE;  break;
 
-					case SDLK_p: grid_save(grid, "saved_grid.txt", &WALL_CLR); break;
-					case SDLK_l: grid_load("saved_grid.txt", grid, &WALL_CLR); break;
+                    case SDLK_p: grid_save(grid, "saved_grid.txt", &WALL_CLR); break;
+                    case SDLK_l: grid_load("saved_grid.txt", grid, &WALL_CLR); break;
 
-	                // On Enter: start / stop search
+                    // On Enter: start / stop search
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
                         if (s_pos[0] == -1) continue;
@@ -101,11 +101,11 @@ int main(int argc, char *argv[])
                             find_path (grid);
                         else restore_grid(grid);
                     break;
-	           	};
+                };
 
-           // Draw cell on mouse click.
-           // Also supports mouse move to draw multiple cells
-			} else if ( evt.type == SDL_MOUSEBUTTONDOWN || evt.type == SDL_MOUSEMOTION ) {
+            // Draw cell on mouse click.
+            // Also supports mouse move to draw multiple cells
+            } else if ( evt.type == SDL_MOUSEBUTTONDOWN || evt.type == SDL_MOUSEMOTION ) {
                 x = evt.button.x / CELL_DIM;
                 y = evt.button.y / CELL_DIM;
 
@@ -150,41 +150,41 @@ int main(int argc, char *argv[])
                     grid -> cells[y][x] -> clr.b = main_colors[3] -> b;
                 }
 
-	        }
-		}
+            }
+        }
 
-		SDL_SetRenderDrawColor(main_render, 128, 128, 128, 255);
-		SDL_RenderClear(main_render);
-		grid_draw(main_render, grid);
-		SDL_Delay(100);
-	}
+        SDL_SetRenderDrawColor(main_render, 128, 128, 128, 255);
+        SDL_RenderClear(main_render);
+        grid_draw(main_render, grid);
+        SDL_Delay(100);
+    }
 
     SDL_DestroyRenderer(main_render);
     SDL_DestroyWindow(main_win);
     main_render = NULL;
     main_render = NULL;
-	SDL_Quit();
+    SDL_Quit();
 
-	grid_destroy(grid, WIDTH / CELL_DIM, HEIGHT / CELL_DIM);
+    grid_destroy(grid, WIDTH / CELL_DIM, HEIGHT / CELL_DIM);
 
-	return 0;
+    return 0;
 } 
 
 void find_path ( GRID *grid ) {
-	unsigned CELLX = grid -> CELLX,
-			CELLY = grid -> CELLY,
-			n_verts = CELLX * CELLY,
-			n_edges = 0;
+    unsigned CELLX = grid -> CELLX;
+    unsigned CELLY = grid -> CELLY;
+    unsigned n_verts = CELLX * CELLY;
+    unsigned n_edges = 0;
 
-	A_Vertex *verts[n_verts] = {};
+    A_Vertex *verts[n_verts] = {};
     A_Vertex *new_vert = NULL;
-	A_Edge *new_edges = NULL;
+    A_Edge *new_edges = NULL;
 
     // If Start and Destination not set, nothing to do
     if (s_pos[0] == -1 || d_pos[0] == -1) return;
 
     char offsets[5] = {0, -1, 0, 1, 0};
-	for (int i = 0; i < grid -> CELLY; i++)
+    for (int i = 0; i < grid -> CELLY; i++)
     for (int j = 0; j < grid -> CELLX; j++)
     {
         if (is_wall(grid, i, j)) continue;
@@ -219,46 +219,46 @@ void find_path ( GRID *grid ) {
         verts[new_vert -> id] = new_vert;
     }
 
-	clock_t start, end;
-	double cpu_time_used;
+    clock_t start, end;
+    double cpu_time_used;
 
-	unsigned start_id = mat2list(s_pos[1], s_pos[0], CELLX);
+    unsigned start_id = mat2list(s_pos[1], s_pos[0], CELLX);
     unsigned end_id   = mat2list(d_pos[1], d_pos[0], CELLX);
 
-	start = clock();
-	LinkedList *path = a_star(verts, n_verts, start_id, end_id, main_render, grid);
-	end = clock();
-	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    start = clock();
+    LinkedList *path = a_star(verts, n_verts, start_id, end_id, main_render, grid);
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-	printf("TIME: %lf\n", cpu_time_used);
-	
-	if (path == NULL) {
+    printf("TIME: %lf\n", cpu_time_used);
+
+    if (path == NULL) {
         printf("No Path Found\n");
-		grid -> cells[s_pos[1]][s_pos[0]] -> clr = START_CLR;
+        grid -> cells[s_pos[1]][s_pos[0]] -> clr = START_CLR;
         restore_grid(grid);
 
     } else {
-		int x, y;
-		int prev_x = s_pos[0], prev_y = s_pos[1];
+        int x, y;
+        int prev_x = s_pos[0], prev_y = s_pos[1];
 
         struct _ll_node *curr_node = path -> head;
 
-		while (curr_node != NULL) {
+        while (curr_node != NULL) {
             x = ((A_Vertex*) curr_node -> payload) -> id % grid -> CELLX;
             y = ((A_Vertex*) curr_node -> payload) -> id / grid -> CELLX;
-			
-			grid -> cells[prev_y][prev_x] -> clr = PATH_CLR;
-			grid -> cells[y][x] -> clr = START_CLR;
+
+            grid -> cells[prev_y][prev_x] -> clr = PATH_CLR;
+            grid -> cells[y][x] -> clr = START_CLR;
 
             grid_draw(main_render, grid);
             SDL_Delay(25);
 
-			prev_x = x;
-			prev_y = y;
-			curr_node = curr_node -> next;
-		}
+            prev_x = x;
+            prev_y = y;
+            curr_node = curr_node -> next;
+        }
 
-		// Free Memory
+        // Free Memory
         for (int i = 0; i < n_verts; i++)
         {
             if (verts[i] == NULL) continue;
@@ -267,18 +267,18 @@ void find_path ( GRID *grid ) {
         }
 
         LL_destroy(path);
-	}
+    }
 }
 
 int is_wall (GRID *grid, int i, int j) {
-	COLOR curr = grid -> cells[i][j] -> clr;
-	return curr.r == WALL_CLR.r &&
+    COLOR curr = grid -> cells[i][j] -> clr;
+    return curr.r == WALL_CLR.r &&
            curr.g == WALL_CLR.g &&
            curr.b == WALL_CLR.b;
 }
 
 void restore_grid ( GRID *grid ) {
-	for (int i = 0; i < grid -> CELLY; i++)
+    for (int i = 0; i < grid -> CELLY; i++)
     for (int j = 0; j < grid -> CELLX; j++)
     {
         if (is_wall(grid, i, j)) continue;
@@ -290,10 +290,10 @@ void restore_grid ( GRID *grid ) {
 
         else
             grid -> cells[i][j] -> clr = VOID_CLR; 
-	}
+    }
 }
 
 unsigned mat2list( unsigned i, unsigned j, unsigned width ) {
-	return i * width + j; 
+    return i * width + j; 
 }
 

@@ -4,18 +4,18 @@
 #include <SDL2/SDL.h>
 
 typedef struct COLOR {
-	unsigned char r, g, b;
+    unsigned char r, g, b;
 } COLOR;
 
 typedef struct CELL {
-	SDL_Rect *rect;
-	COLOR clr;
+    SDL_Rect *rect;
+    COLOR clr;
 } CELL;
 
 typedef struct GRID {
-	unsigned x, y, w, h;
-	unsigned CELLX, CELLY;
-	CELL ***cells;
+    unsigned x, y, w, h;
+    unsigned CELLX, CELLY;
+    CELL ***cells;
 } GRID;
 
 GRID *grid_init(unsigned x, unsigned y, unsigned w, unsigned h, unsigned cell_dim, COLOR clr);

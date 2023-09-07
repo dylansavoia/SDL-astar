@@ -2,7 +2,7 @@
 #define LINKED_LIST_H
 
 struct _ll_node {
-	struct _ll_node *next;
+    struct _ll_node *next;
     void *payload;
 };
 

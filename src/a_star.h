@@ -6,17 +6,17 @@
 #include "linked_list.h"
 
 typedef struct A_Edge {
-	unsigned id;
-	float weight;
+    unsigned id;
+    float weight;
 } A_Edge;
 
 typedef struct A_Vertex {
-	unsigned id, n_edges;
-	float cost;             // COST SO FAR FROM START NODE
-	float heuristic, sum;   // HEURISTIC, sum of c and heuristic
-	A_Edge *edges;          // ARRAY OF EDGES
-	struct A_Vertex *fpath;
-	void *data;
+    unsigned id, n_edges;
+    float cost;             // COST SO FAR FROM START NODE
+    float heuristic, sum;   // HEURISTIC, sum of c and heuristic
+    A_Edge *edges;          // ARRAY OF EDGES
+    struct A_Vertex *fpath;
+    void *data;
 } A_Vertex;
 
 LinkedList *a_star (
