@@ -1,6 +1,7 @@
+#ifndef GRID_H
+#define GRID_H
+
 #include <SDL2/SDL.h>
-#ifndef GRIDLIB
-#define GRIDLIB
 
 typedef struct COLOR {
 	unsigned char r, g, b;
@@ -20,5 +21,5 @@ typedef struct GRID {
 GRID *init_grid( unsigned x, unsigned y, unsigned w, unsigned h, unsigned cell_dim );
 void delete_grid( GRID *grid, unsigned CELLX, unsigned CELLY );
 void draw_grid( SDL_Renderer *render, GRID *grid );
-#endif
 
+#endif

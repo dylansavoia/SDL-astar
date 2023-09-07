@@ -36,10 +36,10 @@ void delete_grid( GRID *grid, unsigned CELLX, unsigned CELLY ) {
 			free(grid -> cells[i][j] -> rect);
 			free(grid -> cells[i][j]);
 		}
-		free( grid -> cells[i] );
+		free(grid -> cells[i]);
 	}
-	free( grid ->  cells );
-	free( grid );
+	free(grid ->  cells);
+	free(grid);
 }
 
 void draw_grid( SDL_Renderer *rend, GRID *grid ) {
