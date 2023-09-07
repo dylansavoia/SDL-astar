@@ -21,7 +21,7 @@ COLOR START_CLR = {  0, 128,   0};
 COLOR DEST_CLR  = {128,   0,   0};
 COLOR PATH_CLR  = { 10, 120, 255};
 
-enum Mode {WALLS, SOURCE, DEST};
+enum Mode {WALL_MODE, SRC_MODE, DEST_MODE};
 COLOR *main_colors[4] = {&WALL_CLR, &START_CLR, &DEST_CLR, &VOID_CLR};
 
 SDL_Window   *main_win    = NULL;
@@ -46,7 +46,7 @@ int is_wall(GRID *grid, int i, int j);
 
 int main(int argc, char *argv[])
 {
-	enum Mode mode = WALLS;
+	enum Mode mode = WALL_MODE;
 
     // Initialize Window and Renderer
 	if (SDL_Init(SDL_INIT_EVERYTHING)) return -1;
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     // hence we assume the second arg is a filepath
     if (argc == 2 && !is_white) grid_load(argv[1], grid, &WALL_CLR);
 
-	char main_bool = 1;
+	bool can_loop = true;
 	COLOR curr;
 
 	int x, y;
@@ -73,16 +73,17 @@ int main(int argc, char *argv[])
     unsigned cellY = HEIGHT / CELL_DIM;
 
 	// Main_Loop
-	while ( main_bool ) {
+	while ( can_loop ) {
 		while ( SDL_PollEvent(&evt) ) {
-			if ( evt.type == SDL_QUIT ) main_bool = 0;
+			if ( evt.type == SDL_QUIT ) can_loop = false;
 			else if ( evt.type == SDL_KEYUP ) {
 				switch (evt.key.keysym.sym) {
+					case SDLK_q: can_loop = false;
 					case SDLK_s:
-					case SDLK_b: mode = SOURCE; break;
+					case SDLK_b: mode = SRC_MODE; break;
 					case SDLK_e: 
-					case SDLK_d: mode = DEST;   break;
-					case SDLK_w: mode = WALLS;  break;
+					case SDLK_d: mode = DEST_MODE;  break;
+					case SDLK_w: mode = WALL_MODE;  break;
 
 					case SDLK_p: grid_save(grid, "saved_grid.txt", &WALL_CLR); break;
 					case SDLK_l: grid_load("saved_grid.txt", grid, &WALL_CLR); break;
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
 	                // On Enter: start / stop search
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
+                        if (s_pos[0] == -1) continue;
                         curr = grid -> cells[s_pos[1]][s_pos[0]] -> clr;
 
                         // To check whether we have to start or stop,
@@ -117,12 +119,30 @@ int main(int argc, char *argv[])
                                 (evt.type == SDL_MOUSEMOTION     && (evt.motion.state & SDL_BUTTON_RMASK));
 
                 if (is_left) {
+                    if (mode != WALL_MODE)
+                    {
+                        // Select either start or destination coordinates array
+                        int *curr_coords = (mode == SRC_MODE) ? s_pos : d_pos;
+
+                        // If a position was already set, we need to
+                        // remove the previous one from the grid
+                        if (curr_coords[0] != -1)
+                        {
+                            CELL *prev_cell = grid -> cells[curr_coords[1]][curr_coords[0]];
+                            prev_cell -> clr.r = VOID_CLR.r;
+                            prev_cell -> clr.g = VOID_CLR.g;
+                            prev_cell -> clr.b = VOID_CLR.b;
+                        }
+
+                        // Set new coords
+                        curr_coords[0] = x;
+                        curr_coords[1] = y;
+                    }
+
+                    // Draw new coord
                     grid -> cells[y][x] -> clr.r = main_colors[mode] -> r;
                     grid -> cells[y][x] -> clr.g = main_colors[mode] -> g;
                     grid -> cells[y][x] -> clr.b = main_colors[mode] -> b;
-
-                    if      (mode == SOURCE) {s_pos[0] = x; s_pos[1] = y;}
-                    else if (mode == DEST)   {d_pos[0] = x; d_pos[1] = y;}
 
                 } else if (is_right) {
                     grid -> cells[y][x] -> clr.r = main_colors[3] -> r;
@@ -159,6 +179,9 @@ void find_path ( GRID *grid ) {
 	A_Vertex *verts[n_verts] = {};
     A_Vertex *new_vert = NULL;
 	A_Edge *new_edges = NULL;
+
+    // If Start and Destination not set, nothing to do
+    if (s_pos[0] == -1 || d_pos[0] == -1) return;
 
     char offsets[5] = {0, -1, 0, 1, 0};
 	for (int i = 0; i < grid -> CELLY; i++)

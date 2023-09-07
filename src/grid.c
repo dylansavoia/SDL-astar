@@ -95,6 +95,7 @@ void grid_load (char *pathname, GRID *grid, COLOR *wall_clr)
     
     unsigned count = 0;
     int CELLX = grid -> CELLX;
+    int CELLY = grid -> CELLY;
 
 	CELL *curr_cell = NULL;
 
@@ -103,6 +104,8 @@ void grid_load (char *pathname, GRID *grid, COLOR *wall_clr)
     {
         int i = count / CELLX;
         int j = count % CELLX;
+
+        if (count >= CELLX * CELLY) break;
         count++;
 
         curr_cell = grid -> cells[i][j];

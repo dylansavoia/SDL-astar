@@ -2,6 +2,7 @@
 
 ![A star animation](gifs/astar_maze.gif)
 
+
 ## How to run
 In order to compile the code, you need the [SDL2 library](https://wiki.libsdl.org/SDL2/Installation) installed.
 
@@ -24,6 +25,7 @@ So to play around with the maze shown in the video:
 ```bash
 $ A_star saved_grid.txt
 ```
+
 
 ## Controls
 You can interact with the grid using your mouse.
