@@ -44,53 +44,8 @@ void restore_grid (GRID *grid);
 // Utility: Check whether cell is a wall
 int is_wall(GRID *grid, int i, int j);
 
-
-
-int main() {
-    /* Heap *heap = heap_create(); */
-    /* heap_push(heap, 9, (void*)9); */
-    /* heap_print(heap); */
-    /* heap_push(heap, 1,  (void*)1); */
-    /* heap_print(heap); */
-    /* heap_push(heap, 5,  (void*)5); */
-    /* heap_print(heap); */
-    /* heap_push(heap, 2,  (void*)2); */
-    /* heap_print(heap); */
-    /**/
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /**/
-    /* heap_push(heap, 3,  (void*)3); */
-    /* heap_print(heap); */
-    /* heap_push(heap, 7,  (void*)7); */
-    /* heap_print(heap); */
-    /* heap_push(heap, 1,  (void*)1); */
-    /* heap_print(heap); */
-    /* heap_push(heap, 8,  (void*)8); */
-    /* heap_print(heap); */
-    /**/
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /* printf("%p\n", heap_pop(heap)); */
-    /* heap_print(heap); */
-    /**/
-    /* heap_destroy(heap); */
-    /* printf("\n"); */
-    /* return 0; */
-
-
+int main(int argc, char *argv[])
+{
 	enum Mode mode = WALLS;
 
     // Initialize Window and Renderer
@@ -102,7 +57,13 @@ int main() {
 	main_render = SDL_CreateRenderer(main_win, -1, SDL_RENDERER_ACCELERATED);
 	SDL_RenderSetLogicalSize(main_render, WIDTH, HEIGHT);
 
-	grid = init_grid(0, 0, WIDTH, HEIGHT, CELL_DIM);
+    bool is_white = argc == 2 && argv[1][0] == '1';
+    COLOR default_clr = (is_white) ? WALL_CLR : VOID_CLR;
+	grid = grid_init(0, 0, WIDTH, HEIGHT, CELL_DIM, default_clr);
+
+    // There is a 2nd argument but it's not FILL white,
+    // hence we assume the second arg is a filepath
+    if (argc == 2 && !is_white) grid_load(argv[1], grid, &WALL_CLR);
 
 	char main_bool = 1;
 	COLOR curr;
@@ -122,22 +83,26 @@ int main() {
 					case SDLK_e: 
 					case SDLK_d: mode = DEST;   break;
 					case SDLK_w: mode = WALLS;  break;
-				}
 
-	               // On Enter: start / stop search
-	           	if (evt.key.keysym.sym == SDLK_RETURN || evt.key.keysym.sym == SDLK_KP_ENTER) {
-	           		curr = grid -> cells[s_pos[1]][s_pos[0]] -> clr;
+					case SDLK_p: grid_save(grid, "saved_grid.txt", &WALL_CLR); break;
+					case SDLK_l: grid_load("saved_grid.txt", grid, &WALL_CLR); break;
 
-	                   // To check whether we have to start or stop,
-	                   // we look at the color of the Start position:
-	                   // if still START_CLR, we have to start; else we reset
-	           		if ( curr.r == START_CLR.r && curr.g == START_CLR.g && curr.b == START_CLR.b)
-	                       find_path (grid);
-	           		else restore_grid(grid);
+	                // On Enter: start / stop search
+                    case SDLK_RETURN:
+                    case SDLK_KP_ENTER:
+                        curr = grid -> cells[s_pos[1]][s_pos[0]] -> clr;
+
+                        // To check whether we have to start or stop,
+                        // we look at the color of the Start position:
+                        // if still START_CLR, we have to start; else we reset
+                        if ( curr.r == START_CLR.r && curr.g == START_CLR.g && curr.b == START_CLR.b)
+                            find_path (grid);
+                        else restore_grid(grid);
+                    break;
 	           	};
 
-	           // Draw cell on mouse click.
-	           // Also supports mouse move to draw multiple cells
+           // Draw cell on mouse click.
+           // Also supports mouse move to draw multiple cells
 			} else if ( evt.type == SDL_MOUSEBUTTONDOWN || evt.type == SDL_MOUSEMOTION ) {
                 x = evt.button.x / CELL_DIM;
                 y = evt.button.y / CELL_DIM;
@@ -170,7 +135,7 @@ int main() {
 
 		SDL_SetRenderDrawColor(main_render, 128, 128, 128, 255);
 		SDL_RenderClear(main_render);
-		draw_grid(main_render, grid);
+		grid_draw(main_render, grid);
 		SDL_Delay(100);
 	}
 
@@ -180,7 +145,7 @@ int main() {
     main_render = NULL;
 	SDL_Quit();
 
-	delete_grid(grid, WIDTH / CELL_DIM, HEIGHT / CELL_DIM);
+	grid_destroy(grid, WIDTH / CELL_DIM, HEIGHT / CELL_DIM);
 
 	return 0;
 } 
@@ -262,7 +227,7 @@ void find_path ( GRID *grid ) {
 			grid -> cells[prev_y][prev_x] -> clr = PATH_CLR;
 			grid -> cells[y][x] -> clr = START_CLR;
 
-            draw_grid(main_render, grid);
+            grid_draw(main_render, grid);
             SDL_Delay(25);
 
 			prev_x = x;

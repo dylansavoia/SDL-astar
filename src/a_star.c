@@ -26,7 +26,7 @@ LinkedList *a_star(
     A_Vertex *curr_vert, *neigh_vert = NULL;
 
 	curr_vert = source;
-	float curr_vert_sum = 0, new_sum = 0;
+	float new_sum = 0;
 
 	for (int i = 0; i < n_verts; ++i)
     {
@@ -40,19 +40,12 @@ LinkedList *a_star(
 	source -> sum = 0;
     heap_push(open_list, 0, (void*) source);
 
-	int x, y;
-    int CELLX = grid -> CELLX;
-
     // While open_list isn't empty or we haven't yet found Destination...
 	while (heap_size(open_list) > 0 && curr_vert -> id != d )
     { 
 		curr_vert = (A_Vertex*) heap_pop(open_list);
         if (visited[curr_vert -> id]) continue;
         visited[curr_vert -> id] = true;
-
-		x = curr_vert -> id % CELLX;
-		y = curr_vert -> id / CELLX;
-
 
         *(COLOR*)(curr_vert -> data) = CLR_VISIT;
 
@@ -73,7 +66,7 @@ LinkedList *a_star(
             *(COLOR*)(neigh_vert -> data) = CLR_EXP;
 		}   
 
-        draw_grid(render, grid);
+        grid_draw(render, grid);
 		SDL_Delay(5);
 	}
 

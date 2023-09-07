@@ -18,8 +18,11 @@ typedef struct GRID {
 	CELL ***cells;
 } GRID;
 
-GRID *init_grid( unsigned x, unsigned y, unsigned w, unsigned h, unsigned cell_dim );
-void delete_grid( GRID *grid, unsigned CELLX, unsigned CELLY );
-void draw_grid( SDL_Renderer *render, GRID *grid );
+GRID *grid_init(unsigned x, unsigned y, unsigned w, unsigned h, unsigned cell_dim, COLOR clr);
+void grid_destroy(GRID *grid, unsigned CELLX, unsigned CELLY);
+void grid_draw(SDL_Renderer *render, GRID *grid);
+
+void grid_save (GRID *grid, char *pathname, COLOR *wall_clr);
+void grid_load (char *pathname, GRID *grid, COLOR *wall_clr);
 
 #endif
