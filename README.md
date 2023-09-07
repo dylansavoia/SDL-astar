@@ -14,14 +14,14 @@ $ cmake .
 $ cmake --build .
 ```
 
-Then run the A_star executable with or without arguments:
+Then, run the A_star executable with or without arguments:
 ```bash
 $ A_star               # Shows a blank screen
 $ A_star 1             # Shows a full screen of walls (edit by removing rathen then adding)
 $ A_star filepath      # Loads a grid from a file
 ```
 
-So to play around with the maze shown in the video:
+To play around with the maze shown in the video:
 ```bash
 $ A_star saved_grid.txt
 ```
@@ -33,12 +33,12 @@ You can interact with the grid using your mouse.
 - Left-button adds new items
 - Right-button removes items
 
-You can also keep a button pressed and move around for faster editing.
+You can also press a mouse button and move around for faster editing.
 
-At any moment you are in one of three modes. Depending on the mode you are in, you draw one of three things:
-- Start: A new Starting point
-- Destination: A new Destination point
-- Wall: The walls of the maze
+Depending on the "mode" you are in, you can draw one of three things:
+- A new Starting point
+- A new Destination point
+- The walls of the maze
 
 You can set a mode and perform other operations through the keyboard.
 
@@ -51,3 +51,4 @@ You can set a mode and perform other operations through the keyboard.
 |P| Print the current grid to a file (saved in current directory) |
 |L| Loads a grid from a file named _saved_grid.txt_  in current directory |
 |Q| Close Window |
+
