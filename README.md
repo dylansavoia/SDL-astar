@@ -1,6 +1,6 @@
 # SDL2 A*
 
-![A star animation](gifs/astar_maze.gif)
+<div align="center"><img src=gifs/astar_maze.gif /></div>
 
 
 ## How to run
